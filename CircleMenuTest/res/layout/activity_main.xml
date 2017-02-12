@@ -1,0 +1,30 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/main_bg"
+    android:gravity="center"
+    android:orientation="vertical"
+    tools:context="com.example.circlemenutest.MainActivity" >
+
+    <RelativeLayout
+        android:layout_width="400dp"
+        android:layout_height="400dp" >
+
+        <com.pan.tanglang.circlemenu.view.CircleMenu
+            android:id="@+id/cm_main"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:background="@drawable/circle_bg" />
+
+        <ImageView
+            android:id="@+id/iv_center_main"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:background="@drawable/circle_center"
+            android:contentDescription="@string/app_name" />
+    </RelativeLayout>
+
+</LinearLayout>

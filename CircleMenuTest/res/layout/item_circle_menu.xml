@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.pan.tanglang.circlemenu.view.CircleItemView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical" >
+
+    <ImageView
+        android:id="@+id/iv_circle_menu_item"
+        android:layout_width="70dp"
+        android:layout_height="50dp"
+        android:contentDescription="@string/app_name" />
+
+    <TextView
+        android:id="@+id/tv_circle_menu_item"
+        android:layout_width="70dp"
+        android:layout_height="20dp"
+        android:gravity="center"
+        android:textSize="16sp" />
+
+</com.pan.tanglang.circlemenu.view.CircleItemView>
