@@ -48,9 +48,9 @@ public class RotateEngine {
 			double start = getAngle(startX, startY, radius);
 			if (mCircleMenu.getStatus() == CircleMenuStatus.STOP_FLING
 					|| mCircleMenu.getStatus() == CircleMenuStatus.IDLE) {
-				//	开始滚动
+				// 开始滚动
 				mCircleMenu.startRotate();
-				//	拿到Fling停下（自然停或按停）之后的开始角度
+				// 拿到Fling停下（自然停或按停）之后的开始角度
 				mStartAngle = mCircleMenu.getmStartAngle();
 			}
 			float x = ev.getX();
@@ -104,14 +104,14 @@ public class RotateEngine {
 	}
 
 	public double getAngle(float xTouch, float yTouch, int radius) {
-		double x = xTouch - (radius / 2d);
-		double y = yTouch - (radius / 2d);
+		double x = xTouch - radius;
+		double y = yTouch - radius;
 		return (double) (Math.asin(y / Math.hypot(x, y)) * 180 / Math.PI);
 	}
 
 	public int getQuadrant(float x, float y, int radius) {
-		int tmpX = (int) (x - radius / 2);
-		int tmpY = (int) (y - radius / 2);
+		int tmpX = (int) (x - radius);
+		int tmpY = (int) (y - radius);
 		if (tmpX >= 0) {
 			return tmpY >= 0 ? 4 : 1;
 		} else {

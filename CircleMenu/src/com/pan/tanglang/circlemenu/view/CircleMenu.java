@@ -26,10 +26,12 @@ import com.pan.tanglang.circlemenu.model.UserEvent;
 public class CircleMenu extends ViewGroup implements OnGestureListener {
 
 	public static final String TAG = "CircleMenu";
+	/** 圆盘半径，那么圆心为（mRadius， mRadius） **/
 	public int mRadius;
-	private static final float RADIO_DEFAULT_CHILD_DIMENSION = 1 / 4f;
-	private static final float RADIO_PADDING_LAYOUT = 1 / 12f;
-	public float mPadding;
+	private static final float RADIO_DEFAULT_CHILD_DIMENSION = 1 / 2f;
+	private static final float RADIO_PADDING_LAYOUT = 1 / 20f;
+	/** 内边距，默认为mRadius/20 **/
+	public float mPadding = -1;
 	private double mStartAngle = 0;
 	private OnMenuItemClickListener mListener;
 	private ListAdapter mAdapter;
@@ -39,7 +41,7 @@ public class CircleMenu extends ViewGroup implements OnGestureListener {
 	private RotateEngine mRotate;
 	private RotateDirection mDirection = RotateDirection.CLOCKWISE;
 	private FlingEngine mFlingEngine;
-	// public boolean isActionFinished = true;
+	// 用户输入事件，默认为无用行为，主要用于解决Fling后的按停，此时屏蔽点击事件
 	private UserEvent mUserEvent = UserEvent.USELESS_ACTION;
 
 	public CircleMenu(Context context, AttributeSet attrs) {
@@ -59,6 +61,7 @@ public class CircleMenu extends ViewGroup implements OnGestureListener {
 		ANTICLOCKWISE;
 	}
 
+	//依附到窗口上
 	@Override
 	protected void onAttachedToWindow() {
 		if (mAdapter != null) {
@@ -69,6 +72,7 @@ public class CircleMenu extends ViewGroup implements OnGestureListener {
 
 	/**
 	 * 菜单重新布局
+	 * 
 	 * @param startAngle
 	 */
 	public void relayoutMenu(double startAngle) {
@@ -121,21 +125,27 @@ public class CircleMenu extends ViewGroup implements OnGestureListener {
 		if (mAdapter.getCount() <= 0) {
 			return;
 		}
-		// 获取半径
-		mRadius = Math.max(getMeasuredWidth(), getMeasuredHeight());
+
+		// 获取半径,
+		mRadius = Math.max(getMeasuredWidth(), getMeasuredHeight()) / 2;
 		final int count = getChildCount();
+		// 取mRadius/2为Item宽度
 		int childSize = (int) (mRadius * RADIO_DEFAULT_CHILD_DIMENSION);
 		int childMode = MeasureSpec.EXACTLY;
+		int makeMeasureSpec = -1;
 		for (int i = 0; i < count; i++) {
 			final View child = getChildAt(i);
 			if (child.getVisibility() == View.GONE) {
 				continue;
 			}
-			int makeMeasureSpec = -1;
 			makeMeasureSpec = MeasureSpec.makeMeasureSpec(childSize, childMode);
+			// 设置为正方形
 			child.measure(makeMeasureSpec, makeMeasureSpec);
 		}
-		mPadding = RADIO_PADDING_LAYOUT * mRadius;
+		// 取mRadius/10为默认内边距
+		if (mPadding == -1) {
+			mPadding = RADIO_PADDING_LAYOUT * mRadius;
+		}
 	}
 
 	@Override
@@ -144,7 +154,8 @@ public class CircleMenu extends ViewGroup implements OnGestureListener {
 			return;
 		}
 		final int childCount = getChildCount();
-		int left, top;
+		int left, top, halfDiagonal;
+		// 限制Item的宽高
 		int itemWidth = (int) (mRadius * RADIO_DEFAULT_CHILD_DIMENSION);
 		float angleDelay = 360 / childCount;
 		for (int i = 0; i < childCount; i++) {
@@ -153,19 +164,20 @@ public class CircleMenu extends ViewGroup implements OnGestureListener {
 				continue;
 			}
 			mStartAngle %= 360;
-			float distanceFromCenter = mRadius / 2f - itemWidth / 2 - mPadding;
-			left = mRadius / 2
+			// 取Item对角线的一半为Item中心到圆盘圆周的距离
+			halfDiagonal = (int) (itemWidth / Math.sqrt(2));
+			float distanceFromCenter = mRadius - halfDiagonal - mPadding;
+			left = mRadius
 					+ (int) Math.round(distanceFromCenter * Math.cos(Math.toRadians(mStartAngle)) - 1 / 2f * itemWidth);
-			top = mRadius / 2
+			top = mRadius
 					+ (int) Math.round(distanceFromCenter * Math.sin(Math.toRadians(mStartAngle)) - 1 / 2f * itemWidth);
 			// 重新Layout
 			child.layout(left, top, left + itemWidth, top + itemWidth);
 			mStartAngle += angleDelay;
 		}
-
+		
 	}
 
-	// 旋转动画实现
 	@SuppressLint("ClickableViewAccessibility")
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
@@ -279,7 +291,6 @@ public class CircleMenu extends ViewGroup implements OnGestureListener {
 
 	/**
 	 * 开始飞转
-	 * 
 	 * @param e1
 	 * @param e2
 	 * @param velocityX
@@ -339,6 +350,14 @@ public class CircleMenu extends ViewGroup implements OnGestureListener {
 
 	public double getmStartAngle() {
 		return mStartAngle;
+	}
+
+	public float getmPadding() {
+		return mPadding;
+	}
+
+	public void setmPadding(float mPadding) {
+		this.mPadding = mPadding;
 	}
 
 	/**
